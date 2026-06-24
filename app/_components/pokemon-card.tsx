@@ -1,7 +1,9 @@
 import Image from "next/image";
+import Link from "next/link";
 import type { PokemonSummary } from "@/lib/pokemon";
 import { formatPokemonId, formatPokemonName } from "@/lib/pokemon";
 import { TypeBadge } from "./type-badge";
+import { ViewTransition } from "react";
 
 type PokemonCardProps = {
   pokemon: PokemonSummary;
@@ -10,7 +12,10 @@ type PokemonCardProps = {
 
 export function PokemonCard({ pokemon, priority = false }: PokemonCardProps) {
   return (
-    <article className="group flex min-h-80 flex-col rounded-lg border border-zinc-200 bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:border-zinc-300 hover:shadow-md">
+    <Link
+      href={`/pokemon/${pokemon.name}`}
+      className="group flex min-h-80 flex-col rounded-lg border border-zinc-200 bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:border-zinc-300 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+    >
       <div className="flex items-center justify-between gap-3">
         <span className="font-mono text-sm font-semibold text-zinc-500">
           {formatPokemonId(pokemon.id)}
@@ -23,7 +28,7 @@ export function PokemonCard({ pokemon, priority = false }: PokemonCardProps) {
       </div>
 
       <div className="relative mt-5 flex aspect-square items-center justify-center rounded-md bg-zinc-50">
-        {pokemon.image ? (
+        <ViewTransition name={`pokemon-${pokemon.id}`}>
           <Image
             src={pokemon.image}
             alt={formatPokemonName(pokemon.name)}
@@ -32,11 +37,7 @@ export function PokemonCard({ pokemon, priority = false }: PokemonCardProps) {
             priority={priority}
             className="h-44 w-44 object-contain transition group-hover:scale-105"
           />
-        ) : (
-          <div className="flex h-44 w-44 items-center justify-center rounded-full bg-zinc-100 text-sm font-medium text-zinc-400">
-            No image
-          </div>
-        )}
+        </ViewTransition>
       </div>
 
       <h2 className="mt-5 text-xl font-bold text-zinc-950">
@@ -50,16 +51,14 @@ export function PokemonCard({ pokemon, priority = false }: PokemonCardProps) {
           <Stat label="Defense" value={pokemon.stats.defense} />
         </dl>
       </div>
-    </article>
+    </Link>
   );
 }
 
 function Stat({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-md bg-zinc-50 px-2 py-2 text-center">
-      <dt className="text-[0.68rem] font-bold text-zinc-500">
-        {label}
-      </dt>
+      <dt className="text-[0.68rem] font-bold text-zinc-500">{label}</dt>
       <dd className="mt-1 text-sm font-bold text-zinc-950">{value}</dd>
     </div>
   );

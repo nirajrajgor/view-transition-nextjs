@@ -9,6 +9,7 @@ import {
   formatPokemonName,
   formatPokemonWeight,
 } from "@/lib/pokemon";
+import { ViewTransition } from "react";
 
 type PokemonPageProps = {
   params: Promise<{
@@ -38,14 +39,16 @@ export default async function PokemonPage({ params }: PokemonPageProps) {
 
         <section className="grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:items-start">
           <div className="flex aspect-square items-center justify-center rounded-lg bg-white">
-            <Image
-              src={pokemon.image}
-              alt={formatPokemonName(pokemon.name)}
-              width={360}
-              height={360}
-              priority
-              className="h-72 w-72 object-contain sm:h-80 sm:w-80"
-            />
+            <ViewTransition name={`pokemon-${pokemon.id}`}>
+              <Image
+                src={pokemon.image}
+                alt={formatPokemonName(pokemon.name)}
+                width={360}
+                height={360}
+                priority
+                className="h-72 w-72 object-contain sm:h-80 sm:w-80"
+              />
+            </ViewTransition>
           </div>
 
           <div>
