@@ -18,16 +18,25 @@ export type PokemonType =
   | "steel"
   | "fairy";
 
+export type PokemonBaseStats = {
+  hp: number;
+  attack: number;
+  defense: number;
+};
+
 export type PokemonSummary = {
   id: number;
   name: string;
   image: string;
   types: PokemonType[];
-  stats: {
-    hp: number;
-    attack: number;
-    defense: number;
-  };
+  stats: PokemonBaseStats;
+};
+
+export type PokemonDetails = Omit<PokemonSummary, "stats"> & {
+  height: number;
+  weight: number;
+  abilities: string[];
+  stats: PokemonBaseStats;
 };
 
 export function formatPokemonId(id: number) {
@@ -39,4 +48,12 @@ export function formatPokemonName(name: string) {
     .split("-")
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(" ");
+}
+
+export function formatPokemonHeight(height: number) {
+  return `${height / 10} m`;
+}
+
+export function formatPokemonWeight(weight: number) {
+  return `${weight / 10} kg`;
 }

@@ -1,7 +1,13 @@
-import type { PokemonSummary, PokemonType } from "@/lib/pokemon";
+import type { PokemonDetails, PokemonSummary, PokemonType } from "@/lib/pokemon";
 
 const POKEAPI_BASE_URL = "https://pokeapi.co/api/v2";
 const POKEMON_LIMIT = 30;
+
+class PokeApiRequestError extends Error {
+  constructor(public status: number) {
+    super(`PokeAPI request failed: ${status}`);
+  }
+}
 
 type PokemonListResponse = {
   results: Array<{
@@ -13,6 +19,8 @@ type PokemonListResponse = {
 type PokemonDetailsResponse = {
   id: number;
   name: string;
+  height: number;
+  weight: number;
   sprites: {
     front_default: string | null;
     other?: {
@@ -33,6 +41,11 @@ type PokemonDetailsResponse = {
       name: string;
     };
   }>;
+  abilities: Array<{
+    ability: {
+      name: string;
+    };
+  }>;
 };
 
 async function fetchJson<T>(url: string): Promise<T> {
@@ -43,27 +56,50 @@ async function fetchJson<T>(url: string): Promise<T> {
   });
 
   if (!response.ok) {
-    throw new Error(`PokeAPI request failed: ${response.status}`);
+    throw new PokeApiRequestError(response.status);
   }
 
   return response.json() as Promise<T>;
+}
+
+export function isPokeApiNotFoundError(error: unknown) {
+  return error instanceof PokeApiRequestError && error.status === 404;
 }
 
 function getBaseStat(stats: PokemonDetailsResponse["stats"], name: string) {
   return stats.find((stat) => stat.stat.name === name)?.base_stat ?? 0;
 }
 
-function normalizePokemon(pokemon: PokemonDetailsResponse): PokemonSummary {
+function normalizePokemonSummary(pokemon: PokemonDetailsResponse): PokemonSummary {
+  const image =
+    pokemon.sprites.other?.["official-artwork"]?.front_default ??
+    pokemon.sprites.front_default;
+
+  if (!image) {
+    throw new Error(`Pokemon image missing: ${pokemon.name}`);
+  }
+
   return {
     id: pokemon.id,
     name: pokemon.name,
-    image:
-      pokemon.sprites.other?.["official-artwork"]?.front_default ??
-      pokemon.sprites.front_default ??
-      "",
+    image,
     types: pokemon.types
       .sort((a, b) => a.slot - b.slot)
       .map((entry) => entry.type.name),
+    stats: {
+      hp: getBaseStat(pokemon.stats, "hp"),
+      attack: getBaseStat(pokemon.stats, "attack"),
+      defense: getBaseStat(pokemon.stats, "defense"),
+    },
+  };
+}
+
+function normalizePokemonDetails(pokemon: PokemonDetailsResponse): PokemonDetails {
+  return {
+    ...normalizePokemonSummary(pokemon),
+    height: pokemon.height,
+    weight: pokemon.weight,
+    abilities: pokemon.abilities.map((entry) => entry.ability.name),
     stats: {
       hp: getBaseStat(pokemon.stats, "hp"),
       attack: getBaseStat(pokemon.stats, "attack"),
@@ -81,5 +117,13 @@ export async function getPokemonList() {
     list.results.map((entry) => fetchJson<PokemonDetailsResponse>(entry.url)),
   );
 
-  return pokemon.map(normalizePokemon);
+  return pokemon.map(normalizePokemonSummary);
+}
+
+export async function getPokemon(name: string) {
+  const pokemon = await fetchJson<PokemonDetailsResponse>(
+    `${POKEAPI_BASE_URL}/pokemon/${name}`,
+  );
+
+  return normalizePokemonDetails(pokemon);
 }
