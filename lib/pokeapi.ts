@@ -1,7 +1,11 @@
-import type { PokemonDetails, PokemonSummary, PokemonType } from "@/lib/pokemon";
+import type {
+  PokemonDetails,
+  PokemonSummary,
+  PokemonType,
+} from "@/lib/pokemon";
 
 const POKEAPI_BASE_URL = "https://pokeapi.co/api/v2";
-const POKEMON_LIMIT = 30;
+const POKEMON_LIMIT = 20;
 
 class PokeApiRequestError extends Error {
   constructor(public status: number) {
@@ -70,7 +74,9 @@ function getBaseStat(stats: PokemonDetailsResponse["stats"], name: string) {
   return stats.find((stat) => stat.stat.name === name)?.base_stat ?? 0;
 }
 
-function normalizePokemonSummary(pokemon: PokemonDetailsResponse): PokemonSummary {
+function normalizePokemonSummary(
+  pokemon: PokemonDetailsResponse,
+): PokemonSummary {
   const image =
     pokemon.sprites.other?.["official-artwork"]?.front_default ??
     pokemon.sprites.front_default;
@@ -94,7 +100,9 @@ function normalizePokemonSummary(pokemon: PokemonDetailsResponse): PokemonSummar
   };
 }
 
-function normalizePokemonDetails(pokemon: PokemonDetailsResponse): PokemonDetails {
+function normalizePokemonDetails(
+  pokemon: PokemonDetailsResponse,
+): PokemonDetails {
   return {
     ...normalizePokemonSummary(pokemon),
     height: pokemon.height,
@@ -126,4 +134,20 @@ export async function getPokemon(name: string) {
   );
 
   return normalizePokemonDetails(pokemon);
+}
+
+// Returns the previous/next Pokemon names in list order. Only fetches the list
+// endpoint (names), which is cached, so it's cheap to call per detail page.
+export async function getPokemonNeighbors(name: string) {
+  const list = await fetchJson<PokemonListResponse>(
+    `${POKEAPI_BASE_URL}/pokemon?limit=${POKEMON_LIMIT}&offset=0`,
+  );
+
+  const names = list.results.map((entry) => entry.name);
+  const index = names.indexOf(name);
+
+  return {
+    prev: index > 0 ? names[index - 1] : null,
+    next: index !== -1 && index < names.length - 1 ? names[index + 1] : null,
+  };
 }
