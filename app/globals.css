@@ -36,26 +36,26 @@ body {
   --slide-offset: -60px;
   animation:
     150ms ease-in both fade reverse,
-    400ms ease-in-out both slide reverse;
+    250ms ease-in-out both slide reverse;
 }
 ::view-transition-new(.nav-forward) {
   --slide-offset: 60px;
   animation:
     210ms ease-out 150ms both fade,
-    400ms ease-in-out both slide;
+    250ms ease-in-out both slide;
 }
 
 ::view-transition-old(.nav-back) {
   --slide-offset: 60px;
   animation:
     150ms ease-in both fade reverse,
-    400ms ease-in-out both slide reverse;
+    250ms ease-in-out both slide reverse;
 }
 ::view-transition-new(.nav-back) {
   --slide-offset: -60px;
   animation:
     210ms ease-out 150ms both fade,
-    400ms ease-in-out both slide;
+    250ms ease-in-out both slide;
 }
 
 @keyframes fade {
