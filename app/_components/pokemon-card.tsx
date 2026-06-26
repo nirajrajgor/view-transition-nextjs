@@ -28,7 +28,11 @@ export function PokemonCard({ pokemon, priority = false }: PokemonCardProps) {
       </div>
 
       <div className="relative mt-5 flex aspect-square items-center justify-center rounded-md bg-zinc-50">
-        <ViewTransition name={`pokemon-${pokemon.id}`}>
+        <ViewTransition
+          name={`pokemon-${pokemon.id}`}
+          share="morph"
+          default="none"
+        >
           <Image
             src={pokemon.image}
             alt={formatPokemonName(pokemon.name)}
