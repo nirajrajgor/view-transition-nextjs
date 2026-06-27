@@ -2,12 +2,18 @@
 
 A Next.js demo project for experimenting with page and UI transitions using the View Transitions API.
 
+## Transition Techniques
+
+This demo covers common View Transitions API patterns in Next.js:
+
+- Crossfade transitions between UI states
+- Morph-style shared element transitions
+- Navigation transitions between routes
+- Global page view transitions
+
 ## Tech Stack
 
-- Next.js 16
-- React 19
-- TypeScript
-- Tailwind CSS 4
+- Next.js 16, React 19, TypeScript, Tailwind CSS 4
 
 ## Getting Started
 
@@ -43,15 +49,6 @@ app/
 public/
   videos/                  # Demo video assets served from /videos/*
 ```
-
-## Video Assets
-
-The demo videos live in `public/videos/` and can be referenced from the app with root-relative URLs:
-
-- `/videos/crossfade.webm`
-- `/videos/morph.webm`
-- `/videos/nav.webm`
-- `/videos/view-transition-demo.webm`
 
 ## License
 
