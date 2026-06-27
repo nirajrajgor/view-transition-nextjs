@@ -16,7 +16,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "View Transition Next.js Demo",
-  description: "A demo of the view transition API in Next.js",
+  description:
+    "Next.js View Transitions API demo for page transitions, route transitions, shared element morphs, and crossfade animations.",
 };
 
 export default function RootLayout({

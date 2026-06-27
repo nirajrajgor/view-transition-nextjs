@@ -2,6 +2,8 @@
 
 A Next.js demo project for experimenting with page and UI transitions using the View Transitions API.
 
+[Live demo](https://nirajrajgor.github.io/view-transition-nextjs/)
+
 ## Transition Techniques
 
 This demo covers common View Transitions API patterns in Next.js:
