@@ -53,11 +53,7 @@ type PokemonDetailsResponse = {
 };
 
 async function fetchJson<T>(url: string): Promise<T> {
-  const response = await fetch(url, {
-    next: {
-      revalidate: 60 * 60 * 24,
-    },
-  });
+  const response = await fetch(url);
 
   if (!response.ok) {
     throw new PokeApiRequestError(response.status);
@@ -128,6 +124,14 @@ export async function getPokemonList() {
   return pokemon.map(normalizePokemonSummary);
 }
 
+export async function getPokemonNames() {
+  const list = await fetchJson<PokemonListResponse>(
+    `${POKEAPI_BASE_URL}/pokemon?limit=${POKEMON_LIMIT}&offset=0`,
+  );
+
+  return list.results.map((entry) => entry.name);
+}
+
 export async function getPokemon(name: string) {
   const pokemon = await fetchJson<PokemonDetailsResponse>(
     `${POKEAPI_BASE_URL}/pokemon/${name}`,
@@ -139,11 +143,7 @@ export async function getPokemon(name: string) {
 // Returns the previous/next Pokemon names in list order. Only fetches the list
 // endpoint (names), which is cached, so it's cheap to call per detail page.
 export async function getPokemonNeighbors(name: string) {
-  const list = await fetchJson<PokemonListResponse>(
-    `${POKEAPI_BASE_URL}/pokemon?limit=${POKEMON_LIMIT}&offset=0`,
-  );
-
-  const names = list.results.map((entry) => entry.name);
+  const names = await getPokemonNames();
   const index = names.indexOf(name);
 
   return {

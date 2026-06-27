@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { TypeBadge } from "@/app/_components/type-badge";
 import {
   getPokemon,
+  getPokemonNames,
   getPokemonNeighbors,
   isPokeApiNotFoundError,
 } from "@/lib/pokeapi";
@@ -20,6 +21,14 @@ type PokemonPageProps = {
     name: string;
   }>;
 };
+
+export const dynamicParams = false;
+
+export async function generateStaticParams() {
+  const names = await getPokemonNames();
+
+  return names.map((name) => ({ name }));
+}
 
 export default async function PokemonPage({ params }: PokemonPageProps) {
   const { name } = await params;

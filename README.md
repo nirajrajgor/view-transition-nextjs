@@ -35,8 +35,8 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ```bash
 npm run dev      # Start the local development server
-npm run build    # Create a production build
-npm run start    # Start the production server
+npm run build    # Create a static export in out/
+npm run preview  # Serve the static export locally
 ```
 
 ## Project Structure
