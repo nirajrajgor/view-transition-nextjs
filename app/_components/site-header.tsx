@@ -8,7 +8,14 @@ export function SiteHeader() {
           Pokemon
         </Link>
 
-        <p className="text-sm font-semibold text-zinc-500">Next.js Demo</p>
+        <a
+          href="https://github.com/nirajrajgor/view-transition-nextjs"
+          target="_blank"
+          rel="noreferrer"
+          className="text-sm font-semibold text-zinc-500 transition hover:text-zinc-950 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-red-600"
+        >
+          GitHub
+        </a>
       </div>
     </header>
   );
